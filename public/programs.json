@@ -50,6 +50,12 @@
     "label": "Artificial Intelligence and Machine Learning (MSc)"
   },
   {
+    "name": "Data Science",
+    "level": "MSc",
+    "label": "Data Science (MSc)",
+    "source": "schedule"
+  },
+  {
     "name": "Digital Electrical Energy",
     "level": "MSc",
     "label": "Digital Electrical Energy (MSc)"
@@ -85,6 +91,12 @@
     "label": "Mathematical and Theoretical Physics (MSc)"
   },
   {
+    "name": "Next Generation Communication Technologies",
+    "level": "MSc",
+    "label": "Next Generation Communication Technologies (MSc)",
+    "source": "schedule"
+  },
+  {
     "name": "Petroleum Engineering",
     "level": "MSc",
     "label": "Petroleum Engineering (MSc)"
@@ -93,6 +105,18 @@
     "name": "Photonics and Quantum Materials",
     "level": "MSc",
     "label": "Photonics and Quantum Materials (MSc)"
+  },
+  {
+    "name": "Robotics and Digital Engineering",
+    "level": "MSc",
+    "label": "Robotics and Digital Engineering (MSc)",
+    "source": "schedule"
+  },
+  {
+    "name": "Technological Entrepreneurship and Innovative Business Development",
+    "level": "MSc",
+    "label": "Technological Entrepreneurship and Innovative Business Development (MSc)",
+    "source": "schedule"
   },
   {
     "name": "AgroBioTechnologies and Engineering",

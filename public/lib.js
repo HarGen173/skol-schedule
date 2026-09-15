@@ -82,6 +82,10 @@ export function matchesSelectedPrograms(eventPrograms, selectedPrograms) {
   return selected.size === 0 || eventPrograms.some((program) => selected.has(program));
 }
 
+export function mergePrograms(apiPrograms = [], schedulePrograms = []) {
+  return [...new Set([...apiPrograms, ...schedulePrograms].filter(Boolean))].sort();
+}
+
 export function monthWeeks(year, month) {
   const first = new Date(year, month - 1, 1);
   const last = new Date(year, month, 0);

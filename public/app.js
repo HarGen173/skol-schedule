@@ -1,10 +1,10 @@
-import { isWeekdayIso, layoutDayEvents, localIso, markOverlaps, matchesSelectedCourses, matchesSelectedPrograms, monthWeeks, timeRange, toMinutes, workingDays } from "./lib.js";
+import { isWeekdayIso, layoutDayEvents, localIso, markOverlaps, matchesSelectedCourses, matchesSelectedPrograms, mergePrograms, monthWeeks, timeRange, toMinutes, workingDays } from "./lib.js";
 
 const locale = "ru-RU";
 const hourHeight = 64;
 const upstream = "https://schedule.skoltech.ru:8443/api/v1";
 const useLocalApi = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-const state = { terms: [], term: null, year: 0, month: 0, data: null, selectedCourses: new Set(), courses: [], selectedPrograms: new Set(), programs: [], availablePrograms: new Set() };
+const state = { terms: [], term: null, year: 0, month: 0, data: null, selectedCourses: new Set(), courses: [], selectedPrograms: new Set(), programs: [], availablePrograms: new Set(), coursePrograms: {} };
 const elements = Object.fromEntries([
   "termSelect", "monthPicker", "previousMonth", "nextMonth", "todayButton", "resetFilters",
   "coursePicker", "courseButton", "courseMenu", "courseSearch", "courseOptions", "selectAllCourses", "clearCourses",
@@ -82,9 +82,15 @@ async function loadStaticMonth(term, year, month) {
   return { term, courses, classes };
 }
 
-function loadMonthData() {
-  if (!useLocalApi) return loadStaticMonth(state.term, state.year, state.month);
-  return request(`/api/month?term=${encodeURIComponent(state.term.id)}&year=${state.year}&month=${state.month}`);
+async function loadMonthData() {
+  const data = useLocalApi
+    ? await request(`/api/month?term=${encodeURIComponent(state.term.id)}&year=${state.year}&month=${state.month}`)
+    : await loadStaticMonth(state.term, state.year, state.month);
+  data.classes = data.classes.map((item) => ({
+    ...item,
+    programs: mergePrograms(item.programs, state.coursePrograms[item.courseCode])
+  }));
+  return data;
 }
 
 function monthValue(year, month) { return `${year}-${String(month).padStart(2, "0")}`; }
@@ -389,7 +395,11 @@ function moveMonth(offset) {
 
 async function init() {
   try {
-    [state.terms, state.programs] = await Promise.all([loadTerms(), request("./programs.json")]);
+    [state.terms, state.programs, state.coursePrograms] = await Promise.all([
+      loadTerms(),
+      request("./programs.json"),
+      request("./course-programs.json")
+    ]);
     elements.termSelect.replaceChildren(...state.terms.map((term) => new Option(term.name, term.id)));
     const params = new URLSearchParams(location.search);
     const requested = state.terms.find((term) => term.id === params.get("term"));

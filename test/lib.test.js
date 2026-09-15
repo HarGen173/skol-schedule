@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { isWeekdayIso, layoutDayEvents, markOverlaps, matchesSelectedCourses, matchesSelectedPrograms, monthWeeks, timeRange, toMinutes, workingDays } from "../public/lib.js";
+import { isWeekdayIso, layoutDayEvents, markOverlaps, matchesSelectedCourses, matchesSelectedPrograms, mergePrograms, monthWeeks, timeRange, toMinutes, workingDays } from "../public/lib.js";
 
 test("converts time to minutes", () => assert.equal(toMinutes("09:30"), 570));
 
@@ -42,11 +42,18 @@ test("matches an event belonging to any selected catalog program", () => {
   assert.equal(matchesSelectedPrograms(programs, new Set(["Physics (PhD)"])), false);
 });
 
-test("bundles the complete unique program list from the Skoltech catalog", async () => {
+test("bundles the unique program list from the catalog and schedule page", async () => {
   const programs = JSON.parse(await readFile(new URL("../public/programs.json", import.meta.url), "utf8"));
-  assert.equal(programs.length, 27);
-  assert.equal(new Set(programs.map((program) => program.label)).size, 27);
+  assert.equal(programs.length, 31);
+  assert.equal(new Set(programs.map((program) => program.label)).size, 31);
   assert.deepEqual([...new Set(programs.map((program) => program.level))].sort(), ["BSc", "MSc", "PhD"]);
+});
+
+test("merges API and official schedule programs without duplicates", () => {
+  assert.deepEqual(
+    mergePrograms(["AI Robotics (MSc)"], ["Data Science (MSc)", "AI Robotics (MSc)"]),
+    ["AI Robotics (MSc)", "Data Science (MSc)"]
+  );
 });
 
 test("places overlapping classes into separate horizontal lanes", () => {
