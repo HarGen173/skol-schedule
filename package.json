@@ -1,0 +1,15 @@
+{
+  "name": "skol-monthly-schedule",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Monthly view for the public Skoltech class schedule",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

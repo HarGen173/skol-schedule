@@ -1,0 +1,9 @@
+node_modules/
+.env
+coverage/
+*.log
+schedule-home.html
+skoltech-schedule.html
+upstream-script.js
+upstream-nuxt/
+nuxt-script-urls.txt

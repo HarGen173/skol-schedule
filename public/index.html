@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Месячное расписание занятий Skoltech с фильтрами и проверкой пересечений">
+  <title>SkolSchedule — расписание по месяцам</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="SkolSchedule — главная">
+      <span class="brand-mark">S</span>
+      <span>SKOL<span>SCHEDULE</span></span>
+    </a>
+    <span class="topbar-caption">Месячное расписание</span>
+  </header>
+
+  <main>
+    <section class="controls" aria-label="Настройки расписания">
+      <label class="control term-control">
+        <span>Учебный период</span>
+        <select id="termSelect" aria-label="Учебный период"></select>
+      </label>
+      <div class="month-nav">
+        <button id="previousMonth" type="button" aria-label="Предыдущий месяц">←</button>
+        <label>
+          <span>Месяц</span>
+          <input id="monthPicker" type="month" aria-label="Месяц">
+        </label>
+        <button id="nextMonth" type="button" aria-label="Следующий месяц">→</button>
+      </div>
+      <button id="todayButton" class="today-button" type="button">Текущий период</button>
+    </section>
+
+    <details class="filters" aria-label="Фильтры">
+      <summary>
+        <span>Фильтры <strong id="filterCount"></strong></span>
+        <span class="summary-hint">курс, преподаватель, программа, аудитория</span>
+      </summary>
+      <div class="filter-content">
+        <div class="filter-grid">
+          <div class="control course-control">
+            <span>Курсы</span>
+            <div id="coursePicker" class="course-picker">
+              <button id="courseButton" class="course-button" type="button" aria-haspopup="listbox" aria-expanded="false">Все курсы</button>
+              <div id="courseMenu" class="course-menu" hidden>
+                <input id="courseSearch" class="course-search" type="search" placeholder="Найти курс…" aria-label="Найти курс">
+                <div class="course-actions">
+                  <button id="selectAllCourses" type="button">Выбрать все</button>
+                  <button id="clearCourses" type="button">Очистить</button>
+                </div>
+                <div id="courseOptions" class="course-options" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </div>
+          <label class="control"><span>Преподаватель</span><select id="instructorFilter"><option value="">Все преподаватели</option></select></label>
+          <label class="control"><span>Программа</span><select id="programFilter"><option value="">Все программы</option></select></label>
+          <label class="control"><span>Аудитория</span><select id="roomFilter"><option value="">Все аудитории</option></select></label>
+          <label class="control search-control"><span>Поиск</span><input id="searchFilter" type="search" placeholder="Название или код курса…"></label>
+        </div>
+        <div class="filter-footer">
+          <div id="activeFilters" class="active-filters" aria-live="polite"></div>
+          <button id="resetFilters" class="text-button" type="button">Сбросить всё</button>
+        </div>
+      </div>
+    </details>
+
+    <section class="schedule-section">
+      <div class="schedule-heading">
+        <div class="legend"><span class="legend-dot"></span> Пересечение по времени</div>
+      </div>
+      <div id="status" class="status" role="status">Загружаем расписание…</div>
+      <div id="calendar" class="calendar" hidden></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Неофициальное представление публичного расписания Skoltech.</p>
+    <p>Данные обновляются автоматически · Europe/Moscow</p>
+  </footer>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
