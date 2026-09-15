@@ -40,29 +40,6 @@ npm test
 
 На GitHub Pages приложение автоматически переключается в статический режим и обращается к публичному Skoltech API напрямую. API разрешает браузерные CORS-запросы, поэтому отдельный сервер для Pages не нужен.
 
-## Публикация на GitHub Pages
-
-В проект уже добавлен workflow `.github/workflows/deploy-pages.yml`. Он публикует содержимое папки `public` после каждого push в ветку `main`.
-
-1. Создайте на GitHub новый пустой репозиторий, например `skol-schedule`. Не добавляйте через интерфейс README или `.gitignore`.
-2. В каталоге проекта выполните (замените `USERNAME` и имя репозитория):
-
-```bash
-git add .
-git commit -m "Initial SkolSchedule"
-git remote add origin https://github.com/USERNAME/skol-schedule.git
-git push -u origin main
-```
-
-3. На GitHub откройте **Settings → Pages** и в поле **Source** выберите **GitHub Actions**.
-4. Откройте вкладку **Actions** и дождитесь завершения workflow **Deploy to GitHub Pages**.
-
-Сайт будет доступен по адресу:
-
-```text
-https://USERNAME.github.io/skol-schedule/
-```
-
 Последующие изменения публикуются командами:
 
 ```bash
