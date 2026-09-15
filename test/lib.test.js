@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isWeekdayIso, layoutDayEvents, markOverlaps, matchesSelectedCourses, monthWeeks, timeRange, toMinutes, workingDays } from "../public/lib.js";
+import { readFile } from "node:fs/promises";
+import { isWeekdayIso, layoutDayEvents, markOverlaps, matchesSelectedCourses, matchesSelectedPrograms, monthWeeks, timeRange, toMinutes, workingDays } from "../public/lib.js";
 
 test("converts time to minutes", () => assert.equal(toMinutes("09:30"), 570));
 
@@ -32,6 +33,20 @@ test("matches any of multiple selected courses and treats an empty set as all", 
   assert.equal(matchesSelectedCourses("MA001", new Set()), true);
   assert.equal(matchesSelectedCourses("MA001", new Set(["MA001", "MA002"])), true);
   assert.equal(matchesSelectedCourses("MA003", new Set(["MA001", "MA002"])), false);
+});
+
+test("matches an event belonging to any selected catalog program", () => {
+  const programs = ["Life Sciences (MSc)", "Life Sciences (PhD)"];
+  assert.equal(matchesSelectedPrograms(programs, new Set()), true);
+  assert.equal(matchesSelectedPrograms(programs, new Set(["Life Sciences (PhD)", "Physics (PhD)"])), true);
+  assert.equal(matchesSelectedPrograms(programs, new Set(["Physics (PhD)"])), false);
+});
+
+test("bundles the complete unique program list from the Skoltech catalog", async () => {
+  const programs = JSON.parse(await readFile(new URL("../public/programs.json", import.meta.url), "utf8"));
+  assert.equal(programs.length, 27);
+  assert.equal(new Set(programs.map((program) => program.label)).size, 27);
+  assert.deepEqual([...new Set(programs.map((program) => program.level))].sort(), ["BSc", "MSc", "PhD"]);
 });
 
 test("places overlapping classes into separate horizontal lanes", () => {

@@ -58,7 +58,20 @@
             </div>
           </div>
           <label class="control"><span>Преподаватель</span><select id="instructorFilter"><option value="">Все преподаватели</option></select></label>
-          <label class="control"><span>Программа</span><select id="programFilter"><option value="">Все программы</option></select></label>
+          <div class="control program-control">
+            <span>Программы</span>
+            <div id="programPicker" class="course-picker">
+              <button id="programButton" class="course-button" type="button" aria-haspopup="listbox" aria-expanded="false">Все программы</button>
+              <div id="programMenu" class="course-menu" hidden>
+                <input id="programSearch" class="course-search" type="search" placeholder="Найти программу…" aria-label="Найти программу">
+                <div class="course-actions">
+                  <button id="selectAllPrograms" type="button">Выбрать все</button>
+                  <button id="clearPrograms" type="button">Очистить</button>
+                </div>
+                <div id="programOptions" class="course-options" role="listbox" aria-multiselectable="true"></div>
+              </div>
+            </div>
+          </div>
           <label class="control"><span>Аудитория</span><select id="roomFilter"><option value="">Все аудитории</option></select></label>
           <label class="control search-control"><span>Поиск</span><input id="searchFilter" type="search" placeholder="Название или код курса…"></label>
         </div>

@@ -1,17 +1,18 @@
-import { isWeekdayIso, layoutDayEvents, localIso, markOverlaps, matchesSelectedCourses, monthWeeks, timeRange, toMinutes, workingDays } from "./lib.js";
+import { isWeekdayIso, layoutDayEvents, localIso, markOverlaps, matchesSelectedCourses, matchesSelectedPrograms, monthWeeks, timeRange, toMinutes, workingDays } from "./lib.js";
 
 const locale = "ru-RU";
 const hourHeight = 64;
 const upstream = "https://schedule.skoltech.ru:8443/api/v1";
 const useLocalApi = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-const state = { terms: [], term: null, year: 0, month: 0, data: null, selectedCourses: new Set(), courses: [] };
+const state = { terms: [], term: null, year: 0, month: 0, data: null, selectedCourses: new Set(), courses: [], selectedPrograms: new Set(), programs: [], availablePrograms: new Set() };
 const elements = Object.fromEntries([
   "termSelect", "monthPicker", "previousMonth", "nextMonth", "todayButton", "resetFilters",
   "coursePicker", "courseButton", "courseMenu", "courseSearch", "courseOptions", "selectAllCourses", "clearCourses",
-  "instructorFilter", "programFilter", "roomFilter", "searchFilter",
+  "programPicker", "programButton", "programMenu", "programSearch", "programOptions", "selectAllPrograms", "clearPrograms",
+  "instructorFilter", "roomFilter", "searchFilter",
   "activeFilters", "filterCount", "status", "calendar"
 ].map((id) => [id, document.getElementById(id)]));
-const filterElements = [elements.instructorFilter, elements.programFilter, elements.roomFilter, elements.searchFilter];
+const filterElements = [elements.instructorFilter, elements.roomFilter, elements.searchFilter];
 
 function setStatus(message, error = false) {
   elements.status.textContent = message;
@@ -154,14 +155,62 @@ function setCourseMenu(open) {
   if (open) elements.courseSearch.focus();
 }
 
+function renderProgramOptions() {
+  const query = elements.programSearch.value.trim().toLocaleLowerCase(locale);
+  const fragment = document.createDocumentFragment();
+  for (const level of ["BSc", "MSc", "PhD"]) {
+    const programs = state.programs.filter((program) => program.level === level && program.label.toLocaleLowerCase(locale).includes(query));
+    if (!programs.length) continue;
+    const heading = document.createElement("div");
+    heading.className = "option-group";
+    heading.textContent = level;
+    fragment.append(heading);
+    for (const program of programs) {
+      const label = document.createElement("label");
+      label.className = `course-option${state.availablePrograms.has(program.label) ? "" : " unavailable"}`;
+      label.setAttribute("role", "option");
+      label.setAttribute("aria-selected", String(state.selectedPrograms.has(program.label)));
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = program.label;
+      checkbox.checked = state.selectedPrograms.has(program.label);
+      const text = document.createElement("span");
+      text.textContent = program.name;
+      label.append(checkbox, text);
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) state.selectedPrograms.add(program.label);
+        else state.selectedPrograms.delete(program.label);
+        renderProgramSelection();
+        render();
+      });
+      fragment.append(label);
+    }
+  }
+  elements.programOptions.replaceChildren(fragment);
+}
+
+function renderProgramSelection() {
+  const count = state.selectedPrograms.size;
+  elements.programButton.textContent = count === 0 ? "Все программы" : `Выбрано: ${count}`;
+  elements.programButton.classList.toggle("has-selection", count > 0);
+  renderProgramOptions();
+}
+
+function setProgramMenu(open) {
+  elements.programMenu.hidden = !open;
+  elements.programButton.setAttribute("aria-expanded", String(open));
+  if (open) elements.programSearch.focus();
+}
+
 function prepareFilters() {
   const classes = state.data.classes.filter((item) => isWeekdayIso(item.date));
   const availableCodes = new Set(classes.map((item) => item.courseCode));
   state.courses = state.data.courses.filter((course) => availableCodes.has(course.code)).sort((a, b) => courseLabel(a).localeCompare(courseLabel(b), locale));
   state.selectedCourses = new Set([...state.selectedCourses].filter((code) => availableCodes.has(code)));
+  state.availablePrograms = new Set(classes.flatMap((item) => item.programs));
   renderCourseSelection();
+  renderProgramSelection();
   optionList(elements.instructorFilter, classes.flatMap((item) => item.instructors), "Все преподаватели");
-  optionList(elements.programFilter, classes.flatMap((item) => item.programs), "Все программы");
   optionList(elements.roomFilter, classes.map((item) => item.room), "Все аудитории");
 }
 
@@ -169,8 +218,8 @@ function filteredEvents() {
   const query = elements.searchFilter.value.trim().toLocaleLowerCase(locale);
   return state.data.classes.filter((item) => isWeekdayIso(item.date)).filter((item) => {
     return matchesSelectedCourses(item.courseCode, state.selectedCourses)
+      && matchesSelectedPrograms(item.programs, state.selectedPrograms)
       && (!elements.instructorFilter.value || item.instructors.includes(elements.instructorFilter.value))
-      && (!elements.programFilter.value || item.programs.includes(elements.programFilter.value))
       && (!elements.roomFilter.value || item.room === elements.roomFilter.value)
       && (!query || `${item.courseCode} ${item.courseName} ${item.instructors.join(" ")}`.toLocaleLowerCase(locale).includes(query));
   });
@@ -179,7 +228,8 @@ function filteredEvents() {
 function renderActiveFilters() {
   const active = filterElements.filter((element) => element.value);
   const selectedCourses = [...state.selectedCourses];
-  elements.filterCount.textContent = active.length + selectedCourses.length || "";
+  const selectedPrograms = [...state.selectedPrograms];
+  elements.filterCount.textContent = active.length + selectedCourses.length + selectedPrograms.length || "";
   const courseChips = selectedCourses.map((code) => {
     const course = state.courses.find((item) => item.code === code);
     const name = course?.name || code;
@@ -202,7 +252,19 @@ function renderActiveFilters() {
     button.addEventListener("click", () => { element.value = ""; render(); });
     return button;
   });
-  elements.activeFilters.replaceChildren(...courseChips, ...otherChips);
+  const programChips = selectedPrograms.map((label) => {
+    const button = document.createElement("button");
+    button.className = "filter-chip program-chip";
+    button.textContent = `${label} ×`;
+    button.title = `Убрать программу «${label}»`;
+    button.addEventListener("click", () => {
+      state.selectedPrograms.delete(label);
+      renderProgramSelection();
+      render();
+    });
+    return button;
+  });
+  elements.activeFilters.replaceChildren(...courseChips, ...programChips, ...otherChips);
 }
 
 function weekNumber(date) {
@@ -327,7 +389,7 @@ function moveMonth(offset) {
 
 async function init() {
   try {
-    state.terms = await loadTerms();
+    [state.terms, state.programs] = await Promise.all([loadTerms(), request("./programs.json")]);
     elements.termSelect.replaceChildren(...state.terms.map((term) => new Option(term.name, term.id)));
     const params = new URLSearchParams(location.search);
     const requested = state.terms.find((term) => term.id === params.get("term"));
@@ -349,11 +411,16 @@ elements.todayButton.addEventListener("click", () => { selectTerm(state.terms.fi
 elements.resetFilters.addEventListener("click", () => {
   filterElements.forEach((element) => { element.value = ""; });
   state.selectedCourses.clear();
+  state.selectedPrograms.clear();
   renderCourseSelection();
+  renderProgramSelection();
   render();
 });
 filterElements.forEach((element) => element.addEventListener(element === elements.searchFilter ? "input" : "change", render));
-elements.courseButton.addEventListener("click", () => setCourseMenu(elements.courseMenu.hidden));
+elements.courseButton.addEventListener("click", () => {
+  setProgramMenu(false);
+  setCourseMenu(elements.courseMenu.hidden);
+});
 elements.courseSearch.addEventListener("input", renderCourseOptions);
 elements.selectAllCourses.addEventListener("click", () => {
   state.selectedCourses = new Set(state.courses.map((course) => course.code));
@@ -365,11 +432,30 @@ elements.clearCourses.addEventListener("click", () => {
   renderCourseSelection();
   render();
 });
+elements.programButton.addEventListener("click", () => {
+  setCourseMenu(false);
+  setProgramMenu(elements.programMenu.hidden);
+});
+elements.programSearch.addEventListener("input", renderProgramOptions);
+elements.selectAllPrograms.addEventListener("click", () => {
+  state.selectedPrograms = new Set(state.programs.map((program) => program.label));
+  renderProgramSelection();
+  render();
+});
+elements.clearPrograms.addEventListener("click", () => {
+  state.selectedPrograms.clear();
+  renderProgramSelection();
+  render();
+});
 document.addEventListener("click", (event) => {
   if (!elements.coursePicker.contains(event.target)) setCourseMenu(false);
+  if (!elements.programPicker.contains(event.target)) setProgramMenu(false);
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setCourseMenu(false);
+  if (event.key === "Escape") {
+    setCourseMenu(false);
+    setProgramMenu(false);
+  }
 });
 
 init();

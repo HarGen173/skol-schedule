@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Cognitive Neurobiology",
+    "level": "BSc",
+    "label": "Cognitive Neurobiology (BSc)"
+  },
+  {
+    "name": "Materials for Energy Storage and Conversion",
+    "level": "BSc",
+    "label": "Materials for Energy Storage and Conversion (BSc)"
+  },
+  {
+    "name": "Math with AI",
+    "level": "BSc",
+    "label": "Math with AI (BSc)"
+  },
+  {
+    "name": "Advanced Computational Science",
+    "level": "MSc",
+    "label": "Advanced Computational Science (MSc)"
+  },
+  {
+    "name": "Advanced Manufacturing Technologies",
+    "level": "MSc",
+    "label": "Advanced Manufacturing Technologies (MSc)"
+  },
+  {
+    "name": "AI and Financial Technologies",
+    "level": "MSc",
+    "label": "AI and Financial Technologies (MSc)"
+  },
+  {
+    "name": "AI Robotics",
+    "level": "MSc",
+    "label": "AI Robotics (MSc)"
+  },
+  {
+    "name": "Applied Computational Mechanics",
+    "level": "MSc",
+    "label": "Applied Computational Mechanics (MSc)"
+  },
+  {
+    "name": "Applied Photonics and Optical Information Systems",
+    "level": "MSc",
+    "label": "Applied Photonics and Optical Information Systems (MSc)"
+  },
+  {
+    "name": "Artificial Intelligence and Machine Learning",
+    "level": "MSc",
+    "label": "Artificial Intelligence and Machine Learning (MSc)"
+  },
+  {
+    "name": "Digital Electrical Energy",
+    "level": "MSc",
+    "label": "Digital Electrical Energy (MSc)"
+  },
+  {
+    "name": "Engineering Systems",
+    "level": "MSc",
+    "label": "Engineering Systems (MSc)"
+  },
+  {
+    "name": "Engineering Systems: Aerospace",
+    "level": "MSc",
+    "label": "Engineering Systems: Aerospace (MSc)"
+  },
+  {
+    "name": "Internet of Things and Wireless Technologies",
+    "level": "MSc",
+    "label": "Internet of Things and Wireless Technologies (MSc)"
+  },
+  {
+    "name": "Life Sciences",
+    "level": "MSc",
+    "label": "Life Sciences (MSc)"
+  },
+  {
+    "name": "Materials Science",
+    "level": "MSc",
+    "label": "Materials Science (MSc)"
+  },
+  {
+    "name": "Mathematical and Theoretical Physics",
+    "level": "MSc",
+    "label": "Mathematical and Theoretical Physics (MSc)"
+  },
+  {
+    "name": "Petroleum Engineering",
+    "level": "MSc",
+    "label": "Petroleum Engineering (MSc)"
+  },
+  {
+    "name": "Photonics and Quantum Materials",
+    "level": "MSc",
+    "label": "Photonics and Quantum Materials (MSc)"
+  },
+  {
+    "name": "AgroBioTechnologies and Engineering",
+    "level": "PhD",
+    "label": "AgroBioTechnologies and Engineering (PhD)"
+  },
+  {
+    "name": "Computational and Data Science and Engineering",
+    "level": "PhD",
+    "label": "Computational and Data Science and Engineering (PhD)"
+  },
+  {
+    "name": "Engineering Systems",
+    "level": "PhD",
+    "label": "Engineering Systems (PhD)"
+  },
+  {
+    "name": "Life Sciences",
+    "level": "PhD",
+    "label": "Life Sciences (PhD)"
+  },
+  {
+    "name": "Materials Science and Engineering",
+    "level": "PhD",
+    "label": "Materials Science and Engineering (PhD)"
+  },
+  {
+    "name": "Mathematics and Mechanics",
+    "level": "PhD",
+    "label": "Mathematics and Mechanics (PhD)"
+  },
+  {
+    "name": "Petroleum Engineering",
+    "level": "PhD",
+    "label": "Petroleum Engineering (PhD)"
+  },
+  {
+    "name": "Physics",
+    "level": "PhD",
+    "label": "Physics (PhD)"
+  }
+]

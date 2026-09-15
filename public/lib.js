@@ -77,6 +77,11 @@ export function matchesSelectedCourses(courseCode, selectedCourses) {
   return selected.size === 0 || selected.has(courseCode);
 }
 
+export function matchesSelectedPrograms(eventPrograms, selectedPrograms) {
+  const selected = selectedPrograms instanceof Set ? selectedPrograms : new Set(selectedPrograms);
+  return selected.size === 0 || eventPrograms.some((program) => selected.has(program));
+}
+
 export function monthWeeks(year, month) {
   const first = new Date(year, month - 1, 1);
   const last = new Date(year, month, 0);
